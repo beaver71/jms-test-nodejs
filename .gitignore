@@ -1,0 +1,24 @@
+#netbeans
+nb-configuration.xml
+nbactions.xml
+nbproject/
+
+# Logs
+logs
+log
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules
+jspm_packages
+bower_components
+
+# Optional npm cache directory
+.npm
+
+# batch
+*.bat
+
+#backup
+_bkp/

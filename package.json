@@ -1,0 +1,15 @@
+{
+  "name": "jms-test-nodejs",
+  "version": "0.0.1",
+  "dependencies": {
+    "minimist": "^1.2.0",
+    "rhea": "^0.3.10",
+    "util": "^0.11.1"
+  },
+  "description": "",
+  "main": "",
+  "devDependencies": {},
+  "scripts": {},
+  "author": "piero.cena@telecomitalia.it",
+  "license": "ISC"
+}
