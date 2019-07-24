@@ -1,13 +1,15 @@
 /**
  * AMQP 1.0 sender (app properties)
  * @author piero@tilab
- * @version 0.0.1
+ * @version 0.0.2
  */
 var args = require('./options.js').options({
 	'client': { default: 'my-sender-js', describe: 'name of identifier for client container'},
     'n': { alias: 'node', default: 'croads', describe: 'name of node (e.g. queue or topic) to which messages are sent'},
     'h': { alias: 'host', default: 'localhost', describe: 'dns or ip name of server where you want to connect'},
     'p': { alias: 'port', default: 5675, describe: 'port to connect to'},
+	'u': { alias: 'user', default: 'test', describe: 'username'},
+	'w': { alias: 'pwd', default: 'test', describe: 'password'},
 	'f': { alias: 'flag', default: '', describe: 'flags (e.g. verbose)'}
 }).usage('Usage: $0 [options] <messages>').help('help').argv;	// --help
 
@@ -15,8 +17,8 @@ var opts = {
 	port: args.port,
 	host: args.host,
 	container_id: args.client,
-	username: 'test',
-	password: 'test',
+	username: args.user,
+	password: args.pwd,
 };
 if (args.flag=='noauth') {
 	delete opts.username;

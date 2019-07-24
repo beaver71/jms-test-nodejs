@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "minimist": "^1.2.0",
-    "rhea": "^0.3.10",
+    "rhea": "^1.0.0",
     "util": "^0.11.1"
   },
   "description": "",
