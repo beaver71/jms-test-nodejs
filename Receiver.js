@@ -1,15 +1,17 @@
 /**
  * AMQP 1.0 receiver (JMS filter)
  * @author piero@tilab
- * @version 0.0.2
+ * @version 0.0.3
  */
 var container = require('rhea');
 var filters = require('rhea').filter;
 var amqp_types = require('rhea').types;
+var dateFormat = require("dateformat");
+var tsFormat = function() { return dateFormat(Date.now(), "dd/mm/yyyy HH:MM:ss.l\t");  }
 
 var args = require('./options.js').options({
 	'client': { default: 'my-receiver-jms-js', describe: 'name of identifier for client container'},
-    's': { alias: 'selector', default: "nat='it' AND prod='a22' AND geo LIKE 'u0j2%'", describe: 'the selector string to use'},
+    's': { alias: 'selector', default: "nat='it' AND prod='a22' AND geo LIKE 'u0j2%'", describe: "the selector string to use ('' or null for none)"},
     'm': { alias: 'messages', default: 10, describe: 'number of messages to expect'},
     'n': { alias: 'node', default: 'croads', describe: 'name of node (e.g. queue or topic) from which messages are received'},
     'h': { alias: 'host', default: 'localhost', describe: 'dns or ip name of server where you want to connect'},
@@ -40,7 +42,7 @@ container.on('message', function (context) {
         return;
     }
     if (expected === 0 || received < expected) {
-        console.log(received+"-received: ", context.message);
+        console.log(tsFormat()+received+"-received: ", context.message);
         if (++received === expected) {
             context.receiver.detach();
             context.connection.close();
@@ -49,19 +51,23 @@ container.on('message', function (context) {
 });
 
 var connection = container.connect(opts).on('connection_open', function () {
-	console.log('connection_open: '+opts.host+":"+opts.port);
+	console.log(tsFormat()+'connection_open: '+opts.host+":"+opts.port);
 }).on('connection_close', function () {
-	console.log('connection_close');
+	console.log(tsFormat()+'connection_close');
 }).on('connection_error', function (e) {
-	console.log('connection_error',e.error.message, e.error.condition);
+	console.log(tsFormat()+'connection_error',e.error.message, e.error.condition);
 });
 
 if (args.flag=='rabbit') {
 	args.node = "/exchange/"+args.node;
 }
 
-var f1 = filters.selector(args.selector);
-if (args.flag=='verbose') console.log("filter: ", f1);
+if (args.selector.toLowerCase()=="null" || args.selector=="''") {
+	var f1 = null;
+} else {
+	f1 = filters.selector(args.selector);
+}
+if (args.flag=='verbose') console.log(tsFormat()+"filter: ", f1);
 
 connection.open_receiver({
 	name: 'my-jms-sub',
@@ -71,5 +77,5 @@ connection.open_receiver({
 	}
 })
 .on('receiver_open', function() {
-	console.log('receiver_open, filter: '+args.selector, ", address: "+args.node);
+	console.log(tsFormat()+'receiver_open, filter: '+args.selector, ", address: "+args.node);
 });

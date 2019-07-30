@@ -2,6 +2,7 @@
   "name": "jms-test-nodejs",
   "version": "0.0.1",
   "dependencies": {
+    "dateformat": "^3.0.3",
     "minimist": "^1.2.0",
     "rhea": "^1.0.0",
     "util": "^0.11.1"

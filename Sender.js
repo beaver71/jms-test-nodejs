@@ -1,8 +1,11 @@
 /**
  * AMQP 1.0 sender (app properties)
  * @author piero@tilab
- * @version 0.0.2
+ * @version 0.0.3
  */
+var dateFormat = require("dateformat");
+var tsFormat = function() { return dateFormat(Date.now(), "dd/mm/yyyy HH:MM:ss.l\t");  }
+
 var args = require('./options.js').options({
 	'client': { default: 'my-sender-js', describe: 'name of identifier for client container'},
     'n': { alias: 'node', default: 'croads', describe: 'name of node (e.g. queue or topic) to which messages are sent'},
@@ -26,11 +29,11 @@ if (args.flag=='noauth') {
 }
 
 var connection = require('rhea').connect(opts).on('connection_open', function () {
-	console.log('connection_open: '+opts.host+":"+opts.port);
+	console.log(tsFormat()+'connection_open: '+opts.host+":"+opts.port);
 }).on('connection_close', function () {
-	console.log('connection_close');
+	console.log(tsFormat()+'connection_close');
 }).on('connection_error', function (e) {
-	console.log('connection_error',e.error.message);
+	console.log(tsFormat()+'connection_error',e.error.message);
 });
 
 if (args.flag=='rabbit') {
@@ -48,12 +51,12 @@ var sender_head = connection.open_sender(args.node);
 sender_head.on('sendable', function(context) {
     for (var i = 0; i < messages.length; i++) {
         var m = messages[i];
-        console.log(i+'-sent: app_properties=\x1b[32m%s\x1b[0m', JSON.stringify(m.application_properties));
-		console.log('      body=\x1b[32m%s\x1b[0m', m.body);
+        console.log(tsFormat()+i+'-sent: app_properties=\x1b[32m%s\x1b[0m', JSON.stringify(m.application_properties));
+		console.log(tsFormat()+'      body=\x1b[32m%s\x1b[0m', m.body);
         sender_head.send(m);
     }
     connection.close();
 })
 .on('sender_open', function() {
-	console.log('sender_open, address: '+args.node);
+	console.log(tsFormat()+'sender_open, address: '+args.node);
 });
