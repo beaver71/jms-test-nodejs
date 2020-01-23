@@ -56,6 +56,8 @@ var connection = container.connect(opts).on('connection_open', function () {
 	console.log(tsFormat()+'connection_close');
 }).on('connection_error', function (e) {
 	console.log(tsFormat()+'connection_error',e.error.message, e.error.condition);
+}).on('error', function (e) {
+	console.log(tsFormat()+'error',e.error.message, e.error.condition);
 });
 
 if (args.flag=='rabbit') {
