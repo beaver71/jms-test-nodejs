@@ -1,16 +1,16 @@
 /**
  * AMQP 1.0 sender (app properties)
  * @author piero@tilab
- * @version 0.0.3
+ * @version 0.0.4
  */
 var dateFormat = require("dateformat");
-var tsFormat = function() { return dateFormat(Date.now(), "dd/mm/yyyy HH:MM:ss.l\t");  }
+const logger = require('./logger.js').logger;
 
 var args = require('./options.js').options({
 	'client': { default: 'my-sender-js', describe: 'name of identifier for client container'},
     'n': { alias: 'node', default: 'croads', describe: 'name of node (e.g. queue or topic) to which messages are sent'},
     'h': { alias: 'host', default: 'localhost', describe: 'dns or ip name of server where you want to connect'},
-    'p': { alias: 'port', default: 5675, describe: 'port to connect to'},
+    'p': { alias: 'port', default: 5673, describe: 'port to connect to'},
 	'u': { alias: 'user', default: 'test', describe: 'username'},
 	'w': { alias: 'pwd', default: 'test', describe: 'password'},
 	'f': { alias: 'flag', default: '', describe: 'flags (e.g. verbose)'}
@@ -29,11 +29,11 @@ if (args.flag=='noauth') {
 }
 
 var connection = require('rhea').connect(opts).on('connection_open', function () {
-	console.log(tsFormat()+'connection_open: '+opts.host+":"+opts.port);
+	logger.info('connection_open: '+opts.host+":"+opts.port);
 }).on('connection_close', function () {
-	console.log(tsFormat()+'connection_close');
+	logger.info('connection_close');
 }).on('connection_error', function (e) {
-	console.log(tsFormat()+'connection_error',e.error.message);
+	logger.error('connection_error',e.error.message);
 });
 
 if (args.flag=='rabbit') {
@@ -51,12 +51,12 @@ var sender_head = connection.open_sender(args.node);
 sender_head.on('sendable', function(context) {
     for (var i = 0; i < messages.length; i++) {
         var m = messages[i];
-        console.log(tsFormat()+i+'-sent: app_properties=\x1b[32m%s\x1b[0m', JSON.stringify(m.application_properties));
-		console.log(tsFormat()+'      body=\x1b[32m%s\x1b[0m', m.body);
+        logger.info(i+'-sent: app_properties=\x1b[32m%s\x1b[0m', JSON.stringify(m.application_properties));
+		logger.info('      body=\x1b[32m%s\x1b[0m', m.body);
         sender_head.send(m);
     }
     connection.close();
 })
 .on('sender_open', function() {
-	console.log(tsFormat()+'sender_open, address: '+args.node);
+	logger.info('sender_open, address: '+args.node);
 });

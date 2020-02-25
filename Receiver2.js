@@ -6,12 +6,17 @@
 var container = require('rhea');
 var filters = require('rhea').filter;
 var amqp_types = require('rhea').types;
+/* var dateFormat = require('dateformat');
+var tsFormat = function() { return dateFormat(Date.now(), "dd/mm/yyyy HH:MM:ss.l\t");  }
+ */
 const logger = require('./logger.js').logger;
 
+logger.info("ciao")
+/* 
 var args = require('./options.js').options({
 	'client': { default: 'my-receiver-jms-js', describe: 'name of identifier for client container'},
     's': { alias: 'selector', default: "nat='it' AND prod='a22' AND geo LIKE 'u0j2%'", describe: "the selector string to use ('' or null for none)"},
-    'm': { alias: 'messages', default: 1000, describe: 'number of messages to expect'},
+    'm': { alias: 'messages', default: 10, describe: 'number of messages to expect'},
     'n': { alias: 'node', default: 'croads', describe: 'name of node (e.g. queue or topic) from which messages are received'},
     'h': { alias: 'host', default: 'localhost', describe: 'dns or ip name of server where you want to connect'},
     'p': { alias: 'port', default: 5673, describe: 'port to connect to'},
@@ -41,7 +46,7 @@ container.on('message', function (context) {
         return;
     }
     if (expected === 0 || received < expected) {
-        logger.info(received+"-received: ", context.message);
+        console.log(tsFormat()+received+"-received: ", context.message);
         if (++received === expected) {
             context.receiver.detach();
             context.connection.close();
@@ -50,13 +55,13 @@ container.on('message', function (context) {
 });
 
 var connection = container.connect(opts).on('connection_open', function () {
-	logger.info('connection_open: '+opts.host+":"+opts.port);
+	console.log(tsFormat()+'connection_open: '+opts.host+":"+opts.port);
 }).on('connection_close', function () {
-	logger.info('connection_close');
+	console.log(tsFormat()+'connection_close');
 }).on('connection_error', function (e) {
-	logger.error('connection_error',e.message, e.condition);
+	console.log(tsFormat()+'connection_error',e.error.message, e.error.condition);
 }).on('error', function (e) {
-	logger.error('error',e.message, e.condition);
+	console.log(tsFormat()+'error',e.error.message, e.error.condition);
 });
 
 if (args.flag=='rabbit') {
@@ -68,7 +73,7 @@ if (args.selector.toLowerCase()=="null" || args.selector=="''") {
 } else {
 	f1 = filters.selector(args.selector);
 }
-if (args.flag=='verbose') logger.info(" >filter: ", f1);
+if (args.flag=='verbose') console.log(tsFormat()+"filter: ", f1);
 
 connection.open_receiver({
 	name: 'my-jms-sub',
@@ -78,6 +83,6 @@ connection.open_receiver({
 	}
 })
 .on('receiver_open', function() {
-	logger.info('receiver_open, filter: '+args.selector, ", address: "+args.node);
-    logger.info('   >waiting for max '+expected+" messages...");
+	console.log(tsFormat()+'receiver_open, filter: '+args.selector, ", address: "+args.node);
 });
+ */
